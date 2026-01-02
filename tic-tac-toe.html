@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Abdul Majid Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .game-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .game-board {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cell:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .cell.x {
+            color: #dc3545;
+        }
+
+        .cell.o {
+            color: #007bff;
+        }
+
+        .cell.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .game-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-player {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .score div {
+            text-align: center;
+        }
+
+        .score h4 {
+            margin: 0;
+            color: #495057;
+        }
+
+        .score span {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .controls {
+            text-align: center;
+        }
+
+        .btn {
+            margin: 5px;
+            padding: 10px 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: #333;
+            text-decoration: none;
+        }
+
+        .winner-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .winner-message.show {
+            display: block;
+        }
+
+        .winner-message.player-win {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .winner-message.ai-win {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .winner-message.tie {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Portfolio
+    </a>
+
+    <div class="container game-container">
+        <div class="game-header">
+            <h1><i class="fas fa-border-all"></i> Tic Tac Toe</h1>
+            <p>Play against the AI and try to get three in a row!</p>
+        </div>
+
+        <div class="game-board">
+            <div class="game-info">
+                <div class="current-player">Current Player: <span id="currentPlayer">You (X)</span></div>
+                <div class="score">
+                    <div>
+                        <h4>You</h4>
+                        <span id="playerScore">0</span>
+                    </div>
+                    <div>
+                        <h4>AI</h4>
+                        <span id="aiScore">0</span>
+                    </div>
+                    <div>
+                        <h4>Ties</h4>
+                        <span id="tieScore">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tic-tac-toe-board" id="gameBoard">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+
+            <div class="winner-message" id="winnerMessage"></div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="resetGame()">
+                    <i class="fas fa-redo"></i> New Game
+                </button>
+                <button class="btn btn-secondary" onclick="resetScore()">
+                    <i class="fas fa-eraser"></i> Reset Score
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let playerScore = 0;
+        let aiScore = 0;
+        let tieScore = 0;
+
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function initGame() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleCellClick);
+            });
+            updateDisplay();
+        }
+
+        function handleCellClick(e) {
+            const cellIndex = parseInt(e.target.getAttribute('data-index'));
+
+            if (board[cellIndex] !== '' || !gameActive || currentPlayer === 'O') {
+                return;
+            }
+
+            makeMove(cellIndex, 'X');
+
+            if (gameActive) {
+                setTimeout(() => {
+                    aiMove();
+                }, 500);
+            }
+        }
+
+        function makeMove(index, player) {
+            board[index] = player;
+            const cell = document.querySelector(`[data-index="${index}"]`);
+            cell.textContent = player;
+            cell.classList.add(player.toLowerCase());
+            cell.classList.add('disabled');
+
+            if (checkWinner()) {
+                gameActive = false;
+                const winner = player === 'X' ? 'player' : 'ai';
+                showWinner(winner);
+                updateScore(winner);
+            } else if (board.every(cell => cell !== '')) {
+                gameActive = false;
+                showWinner('tie');
+                updateScore('tie');
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateCurrentPlayer();
+            }
+        }
+
+        function aiMove() {
+            if (!gameActive) return;
+
+            // Simple AI: Try to win, then block player, then random
+            let move = findBestMove('O'); // Try to win
+            if (move === -1) {
+                move = findBestMove('X'); // Try to block player
+            }
+            if (move === -1) {
+                move = getRandomMove(); // Random move
+            }
+
+            if (move !== -1) {
+                makeMove(move, 'O');
+            }
+        }
+
+        function findBestMove(player) {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                const values = [board[a], board[b], board[c]];
+
+                if (values.filter(v => v === player).length === 2 && values.includes('')) {
+                    return condition[values.indexOf('')];
+                }
+            }
+            return -1;
+        }
+
+        function getRandomMove() {
+            const availableMoves = board.map((cell, index) => cell === '' ? index : null).filter(v => v !== null);
+            return availableMoves.length > 0 ? availableMoves[Math.floor(Math.random() * availableMoves.length)] : -1;
+        }
+
+        function checkWinner() {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function showWinner(winner) {
+            const winnerMessage = document.getElementById('winnerMessage');
+            winnerMessage.classList.remove('player-win', 'ai-win', 'tie');
+
+            if (winner === 'player') {
+                winnerMessage.textContent = '🎉 You Win!';
+                winnerMessage.classList.add('player-win');
+            } else if (winner === 'ai') {
+                winnerMessage.textContent = '🤖 AI Wins!';
+                winnerMessage.classList.add('ai-win');
+            } else {
+                winnerMessage.textContent = '🤝 It\'s a Tie!';
+                winnerMessage.classList.add('tie');
+            }
+
+            winnerMessage.classList.add('show');
+        }
+
+        function updateScore(winner) {
+            if (winner === 'player') {
+                playerScore++;
+                document.getElementById('playerScore').textContent = playerScore;
+            } else if (winner === 'ai') {
+                aiScore++;
+                document.getElementById('aiScore').textContent = aiScore;
+            } else {
+                tieScore++;
+                document.getElementById('tieScore').textContent = tieScore;
+            }
+        }
+
+        function updateCurrentPlayer() {
+            const currentPlayerElement = document.getElementById('currentPlayer');
+            currentPlayerElement.textContent = currentPlayer === 'X' ? 'You (X)' : 'AI (O)';
+        }
+
+        function updateDisplay() {
+            updateCurrentPlayer();
+            document.getElementById('playerScore').textContent = playerScore;
+            document.getElementById('aiScore').textContent = aiScore;
+            document.getElementById('tieScore').textContent = tieScore;
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o', 'disabled');
+            });
+
+            document.getElementById('winnerMessage').classList.remove('show');
+            updateCurrentPlayer();
+        }
+
+        function resetScore() {
+            playerScore = 0;
+            aiScore = 0;
+            tieScore = 0;
+            resetGame();
+            updateDisplay();
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
