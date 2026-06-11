@@ -2054,9 +2054,9 @@
 
     document.addEventListener("DOMContentLoaded", function () {
       console.log("Script Supabase Siap!"); // Cek console browser, harus muncul tulisan ini
-      const supabaseUrl = "https://lvxeijllipugrikkdmjw.supabase.co";
+      const supabaseUrl = "https://mgorkvzkpsmzhizdlccl.supabase.co";
       const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2eGVpamxsaXB1Z3Jpa2tkbWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3NTQzNTksImV4cCI6MjA4MzMzMDM1OX0.DeTwU9YyFvrjXxg4K0xy0M48IHFxazVPRnG_Jow5JrI";
+        "sb_publishable_j9Ce2ULeHe8dGFPRHP88Ng_IN_hxAMr";
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       const form = document.getElementById("supabase_form");
@@ -2091,7 +2091,7 @@
             const {
               data,
               error
-            } = await supabase.from("messages").insert([{
+            } = await supabase.from("entries").insert([{
               fullname: values.fullname,
               email: values.email,
               subject: values.subject,
